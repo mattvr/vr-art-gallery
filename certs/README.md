@@ -1,0 +1,1 @@
+This directory contains dummy certificates for using TLS while serving on localhost. They should not be used in a production environment.

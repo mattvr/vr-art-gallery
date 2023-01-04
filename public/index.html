@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<meta http-equiv="content-type" content="text/html;charset=utf-8" />
+<meta
+name="viewport"
+content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover, shrink-to-fit=no"
+/>
+<meta name="HandheldFriendly" content="true" />
+<meta charset="utf-8" />
+<title>VR Art Gallery</title>
+<style>
+    html,
+    body {
+        overflow: hidden;
+    }
+
+    body {
+        background-color: black;
+        position: relative;
+        color: #aaa;
+        margin: 0;
+
+        
+        touch-action: manipulation;
+        position: fixed;
+        overflow: hidden;
+        -webkit-touch-callout: none;
+        -webkit-user-select: none;
+        -khtml-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+        -webkit-text-size-adjust: none;
+        -webkit-overflow-scrolling: touch;
+        touch-action: none;
+    }
+
+    #scene {
+        width: 100%;
+        height: 100%;
+        position: absolute;
+        top: 0;
+        left: 0;
+        z-index: 0;
+    }
+
+    .text-container {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 1;
+        display: flex;
+        /* align-items: center; */
+        justify-content: center;
+    }
+
+    #text {
+        position: absolute;
+        background-color: rgba(38, 54, 82, 0.66);
+        padding: 8px;
+        border-radius: 8px;
+        overflow: hidden;
+        font-size: 1.5rem;
+        margin: 24px;
+    }
+
+    a {
+        font-size: 1.6rem !important;
+        width: 240px !important;
+        left: calc(50% - 130px) !important;
+        /* opacity: 1 !important; */
+    }
+</style>
+
+<div class="text-container">
+<div id="text"></div>
+</div>
+
+<script type="module" src="app.js"></script>

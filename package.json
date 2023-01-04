@@ -1,0 +1,26 @@
+{
+  "name": "cosm",
+  "version": "0.0.1",
+  "description": "",
+  "scripts": {
+    "build": "esbuild src_app/app.ts --bundle --outfile=public/app.js",
+    "watch": "esbuild src_app/app.ts --watch --bundle --outfile=public/app.js",
+    "serve": "http-server -S -C certs/dummycert.pem -K certs/dummykey.pem -p 443 public"
+  },
+  "author": "",
+  "license": "UNLICENSED",
+  "dependencies": {
+    "@types/three": "^0.147.1",
+    "@types/webxr": "^0.5.0",
+    "concurrently": "^7.6.0",
+    "esbuild": "^0.16.12",
+    "http-server": "^14.1.1",
+    "three": "^0.148.0",
+    "typescript": "^4.9.4"
+  },
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^5.47.1",
+    "@typescript-eslint/parser": "^5.47.1",
+    "eslint": "^8.31.0"
+  }
+}
