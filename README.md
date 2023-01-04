@@ -13,7 +13,7 @@ Rendered to scale with realistic texture. Ultra HD (10K+). As a virtual reality 
 
 **Visit https://cosm.run from your VR headset's browser.**
 
-Click the "Enter VR" button. Note that loading may take a long time and be choppy because of the massive files. High-speed internet required.
+Click the "Enter VR" button. Note that loading may take awhile and be choppy because of the massive files. High-speed internet required.
 
 **Controls:**
 
