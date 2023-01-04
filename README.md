@@ -36,13 +36,13 @@ Controls:
 3. This artwork was then sliced up into smaller chunks, and processed to show
    depth and lighting effects, by generating normal & displacement maps.
 
-![the pipeline of artwork from ingestion to generation of normal maps and depth maps, to an output VR ready image, shown for Starry Night by Van Gogh](misc/image-pipeline.png)
+![the pipeline of artwork from ingestion to generation of normal maps and depth maps, to an output VR ready image, shown for Starry Night by Van Gogh](https://user-images.githubusercontent.com/4052466/210636369-bdfc7ad0-2228-443e-aea2-7058c273def5.png)
 
 4. For some classic paintings, I couldn't find high-resolution scans. For these,
    I used [ESRGAN](https://github.com/xinntao/Real-ESRGAN) which increases the
    resolution of images via a generative adversarial network.
 
-![comparing the best online image of Cupid and Psyche by Bougeareau vs. after processing with ESRGAN which increases its resolution 3x](misc/esrgan.png)
+![comparing the best online image of Cupid and Psyche by Bougeareau vs. after processing with ESRGAN which increases its resolution 3x](https://user-images.githubusercontent.com/4052466/210636500-6127f79f-f9df-47f6-9868-e433f1d88a77.png)
 
 ---
 
