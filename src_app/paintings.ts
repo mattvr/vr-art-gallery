@@ -32,6 +32,7 @@ export const paintings: PaintingSpec[] = [];
 
 const lowResPaintings: PaintingSpec[] = [
   {
+    "id": "starry-night",
     "name": "The Starry Night",
     "artist": "Vincent van Gogh",
     "year": 1889,
@@ -48,6 +49,24 @@ const lowResPaintings: PaintingSpec[] = [
     "og_url":
       "https://en.wikipedia.org/wiki/File:Van_Gogh_-_Starry_Night_-_Google_Art_Project.jpg",
   },
+  {
+    "id": "creation-of-adam-michelangelo",
+    "name": "The Creation of Adam",
+    "artist": "Michelangelo",
+    "year": 1511,
+    "url":
+      "https://upload.wikimedia.org/wikipedia/commons/5/5b/Michelangelo_-_Creation_of_Adam_(cropped).jpg",
+    "dims": [
+      5.7,
+      2.8,
+    ],
+    "res": [
+      3524,
+      1599,
+    ],
+    "og_url":
+      "https://commons.wikimedia.org/wiki/File:Michelangelo_-_Creation_of_Adam_(cropped).jpg",
+  },
 ];
 
 export const initPaintings = async (): Promise<void> => {
@@ -60,7 +79,8 @@ export const initPaintings = async (): Promise<void> => {
       const json = await response.json();
       paintings.push(...json);
     } catch (e) {
-      document.querySelector('#text').innerHTML = "Failed to load custom paintings. Falling back to built-ins."
+      document.querySelector("#text").innerHTML =
+        "Failed to load custom paintings. Falling back to built-ins.";
       console.warn(
         "Failed to load custom paintings.",
         e,
@@ -69,7 +89,8 @@ export const initPaintings = async (): Promise<void> => {
       paintings.push(...lowResPaintings);
     }
   } else {
-    document.querySelector('#text').innerHTML = "Please use a VR headset to load the full experience."
+    document.querySelector("#text").innerHTML =
+      "Please use a VR headset to load the full experience.";
     console.warn("Not VR, falling back to built-ins.");
     paintings.push(...lowResPaintings);
   }

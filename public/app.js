@@ -25587,6 +25587,7 @@
   var paintings = [];
   var lowResPaintings = [
     {
+      "id": "starry-night",
       "name": "The Starry Night",
       "artist": "Vincent van Gogh",
       "year": 1889,
@@ -25600,6 +25601,22 @@
         1013
       ],
       "og_url": "https://en.wikipedia.org/wiki/File:Van_Gogh_-_Starry_Night_-_Google_Art_Project.jpg"
+    },
+    {
+      "id": "creation-of-adam-michelangelo",
+      "name": "The Creation of Adam",
+      "artist": "Michelangelo",
+      "year": 1511,
+      "url": "https://upload.wikimedia.org/wikipedia/commons/5/5b/Michelangelo_-_Creation_of_Adam_(cropped).jpg",
+      "dims": [
+        5.7,
+        2.8
+      ],
+      "res": [
+        3524,
+        1599
+      ],
+      "og_url": "https://commons.wikimedia.org/wiki/File:Michelangelo_-_Creation_of_Adam_(cropped).jpg"
     }
   ];
   var initPaintings = () => __async(void 0, null, function* () {
