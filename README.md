@@ -59,7 +59,7 @@ This will start a server on your local network you can see at
 You will then need to visit your local IP address on your VR headset's browser
 to use the app (likely something like: `https://192.168.1.123`).
 
-> ⚠️ Note: If running locally, you will have only a limited set of artwork available. You need to manually genearte assets for custom art, as the files are too large to be included in this repo. See next section.
+> ⚠️ Note: If running locally, you will have only a limited set of artwork available. You need to manually generate assets for custom art, as the files are too large to be included in this repo. See next section.
 
 ### Loading custom artwork
 
@@ -79,7 +79,7 @@ Once installed, find a painting on [Wikipedia](https://wikipedia.org),
 Then run:
 
 ```sh
-./art.sh <valid-url> <unique-hyphenated-name-for-art>
+./scripts/art.sh <valid-url> <unique-hyphenated-name-for-art>
 ```
 
 This will automatically generate slices, normal maps, and displacement maps for
