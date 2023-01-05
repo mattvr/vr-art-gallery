@@ -1,6 +1,6 @@
 # scripts
 
-Scripts for development, deployment, and image processing.
+Scripts for development, deployment, and image processing. Run these from the project root.
 
 # dev.sh
 
@@ -13,7 +13,7 @@ Requires:
 Usage:
 
 ```sh
-./dev.sh
+./scripts/dev.sh
 ```
 
 # art.sh
@@ -23,7 +23,7 @@ Usage:
 Usage:
 
 ```sh
-./art.sh <valid_url> <short_hyphenated_name_for_art>
+./scripts/art.sh <valid_url> <short_hyphenated_name_for_art>
 ```
 
 # scrape_art.sh
@@ -38,7 +38,7 @@ Requires:
 Usage:
 
 ```sh
-./scrape_art.sh <url>
+./scripts/scrape_art.sh <url>
 ```
 
 # download.sh / download_hires.sh
@@ -52,7 +52,7 @@ Requires:
 Usage:
 
 ```sh
-./download.sh <url> <output_file>
+./scripts/download_hires.sh <url> <output_file>
 ```
 
 # process_art.sh
@@ -67,5 +67,5 @@ Requires:
 Usage:
 
 ```sh
-./process_art.sh <input_file> <output_path>
+./scripts/process_art.sh <input_file> <output_path>
 ```
