@@ -84,7 +84,7 @@ Then run:
 
 This will automatically generate slices, normal maps, and displacement maps for
 your art. You may need to manually adjust some of the values it writes to
-`public/art/index.json`. More about this in [`/scripts`](/scripts/README)
+`public/art/index.json`. More about this in [`scripts/`](/scripts/README.md)
 
 Force refresh the page (`Cmd+Shift+R`) to see your artwork loaded in!
 
