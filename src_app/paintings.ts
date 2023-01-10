@@ -70,9 +70,13 @@ const lowResPaintings: PaintingSpec[] = [
 ];
 
 export const initPaintings = async (): Promise<void> => {
-  // check if user agent is VR
+  // check if user agent is VR, or has ?vr in the URL
   const isVR = navigator.userAgent.includes("VR") ||
-    navigator.userAgent.includes("Oculus");
+    navigator.userAgent.includes("Oculus") || 
+    navigator.userAgent.includes("Quest") ||
+    navigator.userAgent.includes("Wolvic") ||
+    window.location.search.includes("?vr");
+
   if (isVR) {
     const response = await fetch("/art/index.json");
     try {
@@ -90,7 +94,7 @@ export const initPaintings = async (): Promise<void> => {
     }
   } else {
     document.querySelector("#text").innerHTML =
-      "Please use a VR headset to load the full experience.";
+      "Please use a VR headset to load the full experience.<br/>You can add <b>?vr</b> to the URL if you're on a desktop.";
     console.warn("Not VR, falling back to built-ins.");
     paintings.push(...lowResPaintings);
   }

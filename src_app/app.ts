@@ -464,6 +464,12 @@ function renderPainting(scene: THREE.Scene, painting: Painting) {
       side: THREE.DoubleSide,
     });
 
+    console.log(
+      "adding painting with texture",
+      painting.url.replace("{SLICE}", ""),
+      texture,
+    );
+
     if (
       painting.depth_map_url &&
       (newDims[0] > DEPTH_MAP_MIN_DIMS || newDims[1] > DEPTH_MAP_MIN_DIMS)
@@ -741,7 +747,6 @@ function handleKeyboard(scene: THREE.Scene) {
 init().then(animate);
 
 let loadedPaintings = 0;
-
 
 async function init() {
   await initPaintings();

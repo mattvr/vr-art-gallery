@@ -62,13 +62,21 @@ def main():
             image = Image.open(image_path)
             width, height = image.size
 
-            # copy og image to output path
-            os.system(f"cp {image_path} {output_path}")
+            slice_data = slice_art.main(image_path, output_path)
+            slice_data['url'] = (
+                output_path + "/" + image_path.split("/")[-1]).replace('.jpg', '{SLICE}.jpg')
 
-            slice_data = {
-                "res": [width, height],
-                "url": output_path + "/" + image_path.split("/")[-1]
-            }
+            # # copy og image to output path
+            # os.system(f"cp {image_path} {output_path}")
+
+            # slice_data = {
+            #     "res": [width, height],
+            #     "url": output_path + "/" + image_path.split("/")[-1],
+            #     "slice": {
+            #         "num_x": 1,
+            #         "num_y": 1
+            #     }
+            # }
 
         slice_data = {
             "normal_map_url": normal_map_path.replace('.png', '{SLICE}.jpg' if should_slice else '.png'),

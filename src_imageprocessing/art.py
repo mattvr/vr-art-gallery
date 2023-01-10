@@ -64,7 +64,7 @@ if __name__ == "__main__":
     print(f"Res: {'low' if low_res else 'high'}")
 
     res = [-1, -1]
-    dims = [-1, -1]
+    dims = [1, 1]
 
     temp_art_file = f'temp/texture.png'
 
@@ -107,7 +107,7 @@ if __name__ == "__main__":
         ["python3", "src_imageprocessing/process_art.py", temp_art_file, "temp/", "false" if low_res else "false", "false" if low_res else "true"])
 
     # (4) move everything to public/art/<name>
-    os.system(f"rm {temp_art_file}")
+    # os.system(f"rm {temp_art_file}")
     os.system(f"mkdir -p {dest_dir}")
     os.system(f"mv temp/* {dest_dir}")
 

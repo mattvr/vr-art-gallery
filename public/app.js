@@ -25620,7 +25620,7 @@
     }
   ];
   var initPaintings = () => __async(void 0, null, function* () {
-    const isVR = navigator.userAgent.includes("VR") || navigator.userAgent.includes("Oculus");
+    const isVR = navigator.userAgent.includes("VR") || navigator.userAgent.includes("Oculus") || navigator.userAgent.includes("Quest") || navigator.userAgent.includes("Wolvic") || window.location.search.includes("?vr");
     if (isVR) {
       const response = yield fetch("/art/index.json");
       try {
@@ -25636,7 +25636,7 @@
         paintings.push(...lowResPaintings);
       }
     } else {
-      document.querySelector("#text").innerHTML = "Please use a VR headset to load the full experience.";
+      document.querySelector("#text").innerHTML = "Please use a VR headset to load the full experience.<br/>You can add <b>?vr</b> to the URL if you're on a desktop.";
       console.warn("Not VR, falling back to built-ins.");
       paintings.push(...lowResPaintings);
     }
@@ -25867,6 +25867,7 @@
     }
     paintings.forEach((painting) => {
       var _a, _b;
+      return;
       const isOneElementGrid = !painting.slice || painting.slice.num_x === 1 && painting.slice.num_y === 1;
       for (let x = 0; x < ((_a = painting.slice) == null ? void 0 : _a.num_x); x++) {
         for (let y = 0; y < ((_b = painting.slice) == null ? void 0 : _b.num_y); y++) {
@@ -25893,7 +25894,7 @@
           if (painting.normal_map_url) {
             const normalMapUrl = painting.normal_map_url.replace(
               "{SLICE}",
-              `(${x},${y})`
+              isOneElementGrid ? "" : `(${x},${y})`
             );
             numImagesToLoad++;
             textureLoader.load(
@@ -25914,7 +25915,7 @@
           if (painting.depth_map_url) {
             const depthMapUrl = painting.depth_map_url.replace(
               "{SLICE}",
-              `(${x},${y})`
+              isOneElementGrid ? "" : `(${x},${y})`
             );
             numImagesToLoad++;
             textureLoader.load(
@@ -26197,6 +26198,11 @@
         map: texture,
         side: DoubleSide
       });
+      console.log(
+        "adding painting with texture",
+        painting.url.replace("{SLICE}", ""),
+        texture
+      );
       if (painting.depth_map_url && (newDims[0] > DEPTH_MAP_MIN_DIMS || newDims[1] > DEPTH_MAP_MIN_DIMS)) {
         const depthTexture = new TextureLoader().load(
           painting.depth_map_url.replace("{SLICE}", "")

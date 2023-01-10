@@ -28,6 +28,7 @@ const preload = () => {
   }
 
   paintings.forEach((painting) => {
+    return;
     const isOneElementGrid = !painting.slice || (painting.slice.num_x === 1 &&
       painting.slice.num_y === 1);
     for (let x = 0; x < painting.slice?.num_x ?? 1; x++) {
@@ -59,7 +60,7 @@ const preload = () => {
         if (painting.normal_map_url) {
           const normalMapUrl = painting.normal_map_url.replace(
             "{SLICE}",
-            `(${x},${y})`,
+            isOneElementGrid ? "" : `(${x},${y})`,
           );
           numImagesToLoad++;
           textureLoader.load(
@@ -81,7 +82,7 @@ const preload = () => {
         if (painting.depth_map_url) {
           const depthMapUrl = painting.depth_map_url.replace(
             "{SLICE}",
-            `(${x},${y})`,
+            isOneElementGrid ? "" : `(${x},${y})`,
           );
           numImagesToLoad++;
           textureLoader.load(

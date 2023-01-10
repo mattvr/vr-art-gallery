@@ -82,11 +82,22 @@ Then run:
 ./scripts/art.sh <valid-url> <unique-hyphenated-name-for-art>
 ```
 
+For example:
+```sh
+./scripts/art.sh https://commons.wikimedia.org/wiki/File:Monet_-_Impression,_Sunrise.jpg monet-impression
+```
+
+You can also pass in a local file path to a JPEG or PNG image instead of a URL.
+
 This will automatically generate slices, normal maps, and displacement maps for
-your art. You may need to manually adjust some of the values it writes to
+your art. 
+
+You may need to manually adjust some of the values (like the physical dimensions) it writes to
 `public/art/index.json`. More about this in [`scripts/`](/scripts/README.md)
 
 Force refresh the page (`Cmd+Shift+R`) to see your artwork loaded in!
+
+
 
 ---
 
