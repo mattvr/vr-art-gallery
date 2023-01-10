@@ -27,7 +27,7 @@ Click the "Enter VR" button. Note that loading may take awhile and be choppy bec
 
 ## How it works
 
-1. This is app/website is built using [WebXR](https://immersiveweb.dev/) and
+1. This app/website is built using [WebXR](https://immersiveweb.dev/) and
    [Three.JS](https://threejs.org/).
 
 2. High-resolution public domain artwork was scraped from Wikimedia and similar
