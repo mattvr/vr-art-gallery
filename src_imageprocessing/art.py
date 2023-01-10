@@ -106,9 +106,6 @@ if __name__ == "__main__":
     subprocess.run(
         ["python3", "src_imageprocessing/process_art.py", temp_art_file, "temp/", "false" if low_res else "false", "false" if low_res else "true"])
 
-    exit(0)
-    # we gucci
-
     # (4) move everything to public/art/<name>
     os.system(f"rm {temp_art_file}")
     os.system(f"mkdir -p {dest_dir}")
