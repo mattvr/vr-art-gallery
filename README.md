@@ -1,5 +1,8 @@
 # VR Art Gallery (WebXR)
 
+
+#### [[ <img src="https://user-images.githubusercontent.com/4052466/230916740-3ca70970-67fd-45f2-9a22-c0e51e4292fc.svg" /> Introducing the VR Art Gallery ]](https://twitter.com/matt_fvr/status/1610735692287725574)
+
 View artworks like the Mona Lisa, The Sistine Chapel, Starry Night as they
 appear in real life.
 
