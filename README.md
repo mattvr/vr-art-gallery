@@ -14,7 +14,7 @@ Rendered to scale with realistic texture. Ultra HD (10K+). As a virtual reality 
 
 ## [Live demo](https://art.cosm.run)
 
-**Visit https://cosm.run from your VR headset's browser.**
+**Visit https://art.cosm.run from your VR headset's browser.**
 
 Click the "Enter VR" button. Note that loading may take awhile and be choppy because of the massive files. High-speed internet required.
 
