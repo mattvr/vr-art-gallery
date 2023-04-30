@@ -12,7 +12,7 @@ Rendered to scale with realistic texture. Ultra HD (10K+). As a virtual reality 
 
 ---
 
-## [Live demo](https://cosm.run)
+## [Live demo](https://art.cosm.run)
 
 **Visit https://cosm.run from your VR headset's browser.**
 
