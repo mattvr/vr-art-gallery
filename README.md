@@ -8,7 +8,7 @@ appear in real life.
 
 Rendered to scale with realistic texture. Ultra HD (10K+). As a virtual reality website!
 
-<video src="https://user-images.githubusercontent.com/4052466/210516174-53ad4164-b135-49a8-a557-013375c00061.mp4" autoplay loop></video>
+https://github.com/mattvr/vr-art-gallery/assets/4052466/0d4332f9-b90f-4b10-8b88-d8e0d4a696dd
 
 ---
 
