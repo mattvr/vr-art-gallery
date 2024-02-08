@@ -5,7 +5,7 @@ import { VRButton } from "three/examples/jsm/webxr/VRButton.js";
 import { XRControllerModelFactory } from "three/examples/jsm/webxr/XRControllerModelFactory.js";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 import { initPaintings, paintings, PaintingSpec } from "./paintings";
-import * as regularFontJSON from "../public/assets/fonts/helvetiker_regular.typeface.json";
+import * as regularFontJSON from "../public/assets/fonts/helvetiker_regular.typeface.json"
 import * as boldFontJSON from "../public/assets/fonts/helvetiker_bold.typeface.json";
 import { FontLoader } from "three/addons/loaders/FontLoader.js";
 import { TextGeometry } from "three/addons/geometries/TextGeometry.js";
@@ -22,6 +22,8 @@ const START_PAINTING_HEIGHT = 1.5; // average human eye level (meters)
 type Controller = {
   gamepad?: Gamepad;
   space?: THREE.XRTargetRaySpace;
+  hand?: any;
+  handSpace?: THREE.XRHandSpace
   grip?: THREE.XRGripSpace;
 };
 
@@ -77,6 +79,7 @@ const scaleDims = (dims: [number, number], res: [number, number]) => {
 let gripPressed = [false, false];
 let triggerPressed = [false, false];
 let directionPressedNESW = [false, false, false, false];
+let pinching = [false, false];
 function handleController(controller: Controller) {
   // move camera (left stick)
   if (
@@ -134,6 +137,17 @@ function handleController(controller: Controller) {
     controller === controller2
   ) {
     directionPressedNESW[3] = false;
+  }
+
+  // RIGHT HAND: Next painting
+  if (
+    controller === controller2 &&
+    controller.handSpace && isPinching(controller) && !pinching[1]) {
+    changePainting("next");
+    pinching[1] = true;
+  }
+  else if (!isPinching(controller) && controller === controller2) {
+    pinching[1] = false;
   }
 
   // RIGHT STICK: Previous painting
@@ -222,6 +236,36 @@ function handleController(controller: Controller) {
   ) {
     triggerPressed[1] = false;
   }
+
+  // LEFT HAND: Move painting Z based on left controller pinching
+  if (
+    controller === controller1 &&
+    controller.handSpace && isPinching(controller) && !pinching[0]) {
+    if (toggleDistance === 0) {
+      toggleDistance = 1;
+    } else if (toggleDistance === 1) {
+      toggleDistance = 2;
+    } else if (toggleDistance === 2) {
+      toggleDistance = 3;
+    } else if (toggleDistance === 3) {
+      toggleDistance = 0;
+    }
+
+    // get current Z position of camera
+    const paintingZ = toggleDistance === 2 ? -2.5 : -1.5;
+    const cameraZ = camera.position.z;
+    if (toggleDistance > 0) {
+      paintingCenterXYZ[2] = cameraZ - paintingZ;
+    } else {
+      paintingCenterXYZ[2] = 0;
+    }
+    pinching[0] = true;
+    posDirty = true;
+  }
+  else if (!isPinching(controller) && controller === controller1) {
+    pinching[0] = false;
+  }
+
 
   // change on R grip
   if (
@@ -875,37 +919,88 @@ async function init() {
     this.userData.isSelecting = false;
   }
 
-  const controller1Space = renderer.xr.getController(0);
-  controller1Space.addEventListener("selectstart", onSelectStart);
-  controller1Space.addEventListener("selectend", onSelectEnd);
-  controller1Space.addEventListener("connected", function (event) {
-    const gamepad = event?.data?.gamepad as Gamepad;
-    if (!gamepad) return;
-    controller1.gamepad = gamepad;
-    this.add(buildController(event.data));
-  });
-  controller1Space.addEventListener("disconnected", function () {
-    this.remove(this.children[0]);
-  });
-  controller1.space = controller1Space;
-  head.add(controller1Space);
+  function checkInteraction(button, inputSource, frame, renderer) {
+    let tip = frame.getPose(inputSource.hand.get("index-finger-tip"), renderer.referenceSpace);
+    let distance = calculateDistance(tip.transform.position, button.position);
+    if (distance < button.radius) {
+      if (!button.pressed) {
+        button.pressed = true;
+        button.onpress();
+      }
+    } else {
+      if (button.pressed) {
+        button.pressed = false;
+        button.onrelease();
+      }
+    }
+  }
 
-  console.log("all available buttons", controller1Space?.gamepad?.buttons);
+  const controller1Space = renderer.xr.getController(0);
+  if (controller1Space) {
+    controller1Space.addEventListener("selectstart", onSelectStart);
+    controller1Space.addEventListener("selectend", onSelectEnd);
+    controller1Space.addEventListener("connected", function (event) {
+      const gamepad = event?.data?.gamepad as Gamepad;
+      if (!gamepad) return;
+      controller1.gamepad = gamepad;
+      this.add(buildController(event.data));
+    });
+    controller1Space.addEventListener("disconnected", function () {
+      this.remove(this.children[0]);
+    });
+    controller1.space = controller1Space;
+    head.add(controller1Space);
+
+    console.log("all available buttons", controller1Space?.gamepad?.buttons);
+  }
 
   const controller2Space = renderer.xr.getController(1);
-  controller2Space.addEventListener("selectstart", onSelectStart);
-  controller2Space.addEventListener("selectend", onSelectEnd);
-  controller2Space.addEventListener("connected", function (event) {
-    const gamepad = event?.data?.gamepad as Gamepad;
-    if (!gamepad) return;
-    controller2.gamepad = gamepad;
-    this.add(buildController(event.data));
-  });
-  controller2Space.addEventListener("disconnected", function () {
-    this.remove(this.children[0]);
-  });
-  controller2.space = controller2Space;
-  head.add(controller2Space);
+  if (controller2Space) {
+    controller2Space.addEventListener("selectstart", onSelectStart);
+    controller2Space.addEventListener("selectend", onSelectEnd);
+    controller2Space.addEventListener("connected", function (event) {
+      const gamepad = event?.data?.gamepad as Gamepad;
+      if (!gamepad) return;
+      controller2.gamepad = gamepad;
+      this.add(buildController(event.data));
+    });
+    controller2Space.addEventListener("disconnected", function () {
+      this.remove(this.children[0]);
+    });
+    controller2.space = controller2Space;
+    head.add(controller2Space);
+  }
+
+  const hand1Space = renderer.xr.getHand(0);
+  if (hand1Space) {
+    hand1Space.addEventListener("connected", function (event) {
+      const gamepad = event?.data?.gamepad as Gamepad;
+      if (!gamepad) return;
+      controller1.gamepad = gamepad;
+      this.add(buildHand(event.data));
+    });
+    hand1Space.addEventListener("disconnected", function () {
+      this.remove(this.children[0]);
+    });
+    controller1.handSpace = hand1Space;
+    head.add(hand1Space);
+  }
+
+  const hand2Space = renderer.xr.getHand(1);
+  if (hand2Space) {
+    hand2Space.addEventListener("connected", function (event) {
+      const gamepad = event?.data?.gamepad as Gamepad;
+      if (!gamepad) return;
+      controller2.gamepad = gamepad;
+      this.add(buildHand(event.data));
+    });
+    hand2Space.addEventListener("disconnected", function () {
+      this.remove(this.children[0]);
+    });
+    controller2.handSpace = hand2Space;
+    head.add(hand2Space);
+  }
+
 
   const controllerModelFactory = new XRControllerModelFactory();
 
@@ -960,6 +1055,25 @@ function buildController(data) {
   }
 }
 
+function buildHand(data) {
+  const geometry = new THREE.BufferGeometry();
+  geometry.setAttribute(
+    "position",
+    new THREE.Float32BufferAttribute([0, 0, 0, 0, 0, -1], 3),
+  );
+  geometry.setAttribute(
+    "color",
+    new THREE.Float32BufferAttribute([0.5, 0.5, 0.5, 0, 0, 0], 3),
+  );
+
+  const material = new THREE.LineBasicMaterial({
+    vertexColors: true,
+    blending: THREE.AdditiveBlending,
+  });
+
+  return new THREE.Line(geometry, material);
+}
+
 function onWindowResize() {
   camera.aspect = window.innerWidth / window.innerHeight;
   camera.updateProjectionMatrix();
@@ -1002,6 +1116,32 @@ function render() {
 
   renderer.render(scene, camera);
 }
+
+const isPinching = (controller: Controller) => {
+  // check if has hand set
+  if (!controller.handSpace) {
+    return false;
+  }
+
+  const indexFingerPos = controller.handSpace.joints?.["index-finger-tip"]?.position
+  const thumbPos = controller.handSpace.joints?.["thumb-tip"]?.position
+
+  if (!indexFingerPos || !thumbPos) {
+    return false;
+  }
+
+  const distance = calculateDistance(indexFingerPos, thumbPos);
+  return distance < 0.015;
+}
+
+const calculateDistance = (pos1, pos2) => {
+  return Math.sqrt(
+    Math.pow(pos1.x - pos2.x, 2) +
+    Math.pow(pos1.y - pos2.y, 2) +
+    Math.pow(pos1.z - pos2.z, 2)
+  );
+}
+
 
 // control turning
 // body.rotation.y += (controller.gamepad.axes[2] > 0 ? -1 : 1) * Math.PI /

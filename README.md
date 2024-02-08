@@ -22,9 +22,9 @@ Click the "Enter VR" button. Note that loading may take awhile and be choppy bec
 
 - Left joystick: Move painting up / down / left / right.
 
-- Right joystick: Switch to next or previous painting.
+- Right joystick OR tap right index finger with thumb: Switch to next or previous painting.
 
-- Right trigger: Bring painting closer or further away.
+- Right trigger OR tap left index finger with thumb: Bring painting closer or further away.
 
 ---
 

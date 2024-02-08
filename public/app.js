@@ -25620,8 +25620,9 @@
     }
   ];
   var initPaintings = () => __async(void 0, null, function* () {
-    const isVR = navigator.userAgent.includes("VR") || navigator.userAgent.includes("Oculus") || navigator.userAgent.includes("Quest") || navigator.userAgent.includes("Wolvic") || window.location.search.includes("?vr");
+    const isVR = navigator.userAgent.includes("VR") || navigator.userAgent.includes("Oculus") || navigator.userAgent.includes("Quest") || navigator.userAgent.includes("Wolvic") || navigator.userAgent.includes("Safari") || window.location.search.includes("?vr");
     if (isVR) {
+      document.querySelector("#text").innerHTML = 'Ensure WebXR is enabled in settings, then press the button at the bottom.<br/>by <a href="https://mattvr.io">Matt VR</a>';
       const response = yield fetch("/art/index.json");
       try {
         const json = yield response.json();
@@ -25636,7 +25637,7 @@
         paintings.push(...lowResPaintings);
       }
     } else {
-      document.querySelector("#text").innerHTML = "Please use a VR headset to load the full experience.<br/>You can add <b>?vr</b> to the URL if you're on a desktop.";
+      document.querySelector("#text").innerHTML = `Please use a VR headset to load the full experience.<br/>You can add <b>?vr</b> to the URL if you're on a desktop.<br/>by <a href="https://mattvr.io">Matt VR</a>`;
       console.warn("Not VR, falling back to built-ins.");
       paintings.push(...lowResPaintings);
     }
@@ -25977,6 +25978,7 @@
   var gripPressed = [false, false];
   var triggerPressed = [false, false];
   var directionPressedNESW = [false, false, false, false];
+  var pinching = [false, false];
   function handleController(controller) {
     var _a, _b, _c, _d, _e, _f, _g, _h, _i, _j, _k, _l, _m, _n, _o, _p, _q2, _r, _s, _t;
     if (controller.gamepad && ((_a = controller.gamepad) == null ? void 0 : _a.axes[2]) !== 0 && controller === controller1) {
@@ -25992,6 +25994,12 @@
       changePainting("next");
     } else if (controller.gamepad && directionPressedNESW[3] && ((_d = controller.gamepad) == null ? void 0 : _d.axes[2]) < TURN_ACTIVATION_THRESHOLD && controller === controller2) {
       directionPressedNESW[3] = false;
+    }
+    if (controller === controller2 && controller.handSpace && isPinching(controller) && !pinching[1]) {
+      changePainting("next");
+      pinching[1] = true;
+    } else if (!isPinching(controller) && controller === controller2) {
+      pinching[1] = false;
     }
     if (controller.gamepad && !directionPressedNESW[1] && ((_e = controller.gamepad) == null ? void 0 : _e.axes[2]) < -TURN_ACTIVATION_THRESHOLD && controller === controller2) {
       directionPressedNESW[1] = true;
@@ -26030,6 +26038,28 @@
       posDirty = true;
     } else if (controller.gamepad && ((_l = controller.gamepad) == null ? void 0 : _l.buttons[0].pressed) === false && controller === controller2) {
       triggerPressed[1] = false;
+    }
+    if (controller === controller1 && controller.handSpace && isPinching(controller) && !pinching[0]) {
+      if (toggleDistance === 0) {
+        toggleDistance = 1;
+      } else if (toggleDistance === 1) {
+        toggleDistance = 2;
+      } else if (toggleDistance === 2) {
+        toggleDistance = 3;
+      } else if (toggleDistance === 3) {
+        toggleDistance = 0;
+      }
+      const paintingZ = toggleDistance === 2 ? -2.5 : -1.5;
+      const cameraZ = camera.position.z;
+      if (toggleDistance > 0) {
+        paintingCenterXYZ[2] = cameraZ - paintingZ;
+      } else {
+        paintingCenterXYZ[2] = 0;
+      }
+      pinching[0] = true;
+      posDirty = true;
+    } else if (!isPinching(controller) && controller === controller1) {
+      pinching[0] = false;
     }
     if (!gripPressed[0] && controller.gamepad && ((_n = (_m = controller.gamepad) == null ? void 0 : _m.buttons[1]) == null ? void 0 : _n.pressed) && controller === controller2) {
       mouthPopSound.play();
@@ -26448,39 +26478,90 @@
       function onSelectEnd() {
         this.userData.isSelecting = false;
       }
+      function checkInteraction(button, inputSource, frame, renderer2) {
+        let tip = frame.getPose(inputSource.hand.get("index-finger-tip"), renderer2.referenceSpace);
+        let distance = calculateDistance(tip.transform.position, button.position);
+        if (distance < button.radius) {
+          if (!button.pressed) {
+            button.pressed = true;
+            button.onpress();
+          }
+        } else {
+          if (button.pressed) {
+            button.pressed = false;
+            button.onrelease();
+          }
+        }
+      }
       const controller1Space = renderer.xr.getController(0);
-      controller1Space.addEventListener("selectstart", onSelectStart);
-      controller1Space.addEventListener("selectend", onSelectEnd);
-      controller1Space.addEventListener("connected", function(event) {
-        var _a2;
-        const gamepad = (_a2 = event == null ? void 0 : event.data) == null ? void 0 : _a2.gamepad;
-        if (!gamepad)
-          return;
-        controller1.gamepad = gamepad;
-        this.add(buildController(event.data));
-      });
-      controller1Space.addEventListener("disconnected", function() {
-        this.remove(this.children[0]);
-      });
-      controller1.space = controller1Space;
-      head.add(controller1Space);
-      console.log("all available buttons", (_a = controller1Space == null ? void 0 : controller1Space.gamepad) == null ? void 0 : _a.buttons);
+      if (controller1Space) {
+        controller1Space.addEventListener("selectstart", onSelectStart);
+        controller1Space.addEventListener("selectend", onSelectEnd);
+        controller1Space.addEventListener("connected", function(event) {
+          var _a2;
+          const gamepad = (_a2 = event == null ? void 0 : event.data) == null ? void 0 : _a2.gamepad;
+          if (!gamepad)
+            return;
+          controller1.gamepad = gamepad;
+          this.add(buildController(event.data));
+        });
+        controller1Space.addEventListener("disconnected", function() {
+          this.remove(this.children[0]);
+        });
+        controller1.space = controller1Space;
+        head.add(controller1Space);
+        console.log("all available buttons", (_a = controller1Space == null ? void 0 : controller1Space.gamepad) == null ? void 0 : _a.buttons);
+      }
       const controller2Space = renderer.xr.getController(1);
-      controller2Space.addEventListener("selectstart", onSelectStart);
-      controller2Space.addEventListener("selectend", onSelectEnd);
-      controller2Space.addEventListener("connected", function(event) {
-        var _a2;
-        const gamepad = (_a2 = event == null ? void 0 : event.data) == null ? void 0 : _a2.gamepad;
-        if (!gamepad)
-          return;
-        controller2.gamepad = gamepad;
-        this.add(buildController(event.data));
-      });
-      controller2Space.addEventListener("disconnected", function() {
-        this.remove(this.children[0]);
-      });
-      controller2.space = controller2Space;
-      head.add(controller2Space);
+      if (controller2Space) {
+        controller2Space.addEventListener("selectstart", onSelectStart);
+        controller2Space.addEventListener("selectend", onSelectEnd);
+        controller2Space.addEventListener("connected", function(event) {
+          var _a2;
+          const gamepad = (_a2 = event == null ? void 0 : event.data) == null ? void 0 : _a2.gamepad;
+          if (!gamepad)
+            return;
+          controller2.gamepad = gamepad;
+          this.add(buildController(event.data));
+        });
+        controller2Space.addEventListener("disconnected", function() {
+          this.remove(this.children[0]);
+        });
+        controller2.space = controller2Space;
+        head.add(controller2Space);
+      }
+      const hand1Space = renderer.xr.getHand(0);
+      if (hand1Space) {
+        hand1Space.addEventListener("connected", function(event) {
+          var _a2;
+          const gamepad = (_a2 = event == null ? void 0 : event.data) == null ? void 0 : _a2.gamepad;
+          if (!gamepad)
+            return;
+          controller1.gamepad = gamepad;
+          this.add(buildHand(event.data));
+        });
+        hand1Space.addEventListener("disconnected", function() {
+          this.remove(this.children[0]);
+        });
+        controller1.handSpace = hand1Space;
+        head.add(hand1Space);
+      }
+      const hand2Space = renderer.xr.getHand(1);
+      if (hand2Space) {
+        hand2Space.addEventListener("connected", function(event) {
+          var _a2;
+          const gamepad = (_a2 = event == null ? void 0 : event.data) == null ? void 0 : _a2.gamepad;
+          if (!gamepad)
+            return;
+          controller2.gamepad = gamepad;
+          this.add(buildHand(event.data));
+        });
+        hand2Space.addEventListener("disconnected", function() {
+          this.remove(this.children[0]);
+        });
+        controller2.handSpace = hand2Space;
+        head.add(hand2Space);
+      }
       const controllerModelFactory = new XRControllerModelFactory();
       const controllerGrip1 = renderer.xr.getControllerGrip(0);
       controllerGrip1.add(
@@ -26524,6 +26605,22 @@
         return new Mesh(geometry, material);
     }
   }
+  function buildHand(data) {
+    const geometry = new BufferGeometry();
+    geometry.setAttribute(
+      "position",
+      new Float32BufferAttribute([0, 0, 0, 0, 0, -1], 3)
+    );
+    geometry.setAttribute(
+      "color",
+      new Float32BufferAttribute([0.5, 0.5, 0.5, 0, 0, 0], 3)
+    );
+    const material = new LineBasicMaterial({
+      vertexColors: true,
+      blending: AdditiveBlending
+    });
+    return new Line(geometry, material);
+  }
   function onWindowResize() {
     camera.aspect = window.innerWidth / window.innerHeight;
     camera.updateProjectionMatrix();
@@ -26555,6 +26652,24 @@
     }
     renderer.render(scene, camera);
   }
+  var isPinching = (controller) => {
+    var _a, _b, _c, _d;
+    if (!controller.handSpace) {
+      return false;
+    }
+    const indexFingerPos = (_b = (_a = controller.handSpace.joints) == null ? void 0 : _a["index-finger-tip"]) == null ? void 0 : _b.position;
+    const thumbPos = (_d = (_c = controller.handSpace.joints) == null ? void 0 : _c["thumb-tip"]) == null ? void 0 : _d.position;
+    if (!indexFingerPos || !thumbPos) {
+      return false;
+    }
+    const distance = calculateDistance(indexFingerPos, thumbPos);
+    return distance < 0.015;
+  };
+  var calculateDistance = (pos1, pos2) => {
+    return Math.sqrt(
+      Math.pow(pos1.x - pos2.x, 2) + Math.pow(pos1.y - pos2.y, 2) + Math.pow(pos1.z - pos2.z, 2)
+    );
+  };
 })();
 /*! Bundled license information:
 

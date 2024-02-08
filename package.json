@@ -11,7 +11,7 @@
   "license": "UNLICENSED",
   "dependencies": {
     "@types/three": "^0.147.1",
-    "@types/webxr": "^0.5.0",
+    "@types/webxr": "^0.5.13",
     "concurrently": "^7.6.0",
     "esbuild": "^0.16.12",
     "http-server": "^14.1.1",

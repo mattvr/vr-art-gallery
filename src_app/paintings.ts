@@ -72,12 +72,15 @@ const lowResPaintings: PaintingSpec[] = [
 export const initPaintings = async (): Promise<void> => {
   // check if user agent is VR, or has ?vr in the URL
   const isVR = navigator.userAgent.includes("VR") ||
-    navigator.userAgent.includes("Oculus") || 
+    navigator.userAgent.includes("Oculus") ||
     navigator.userAgent.includes("Quest") ||
     navigator.userAgent.includes("Wolvic") ||
+    navigator.userAgent.includes("Safari") ||
     window.location.search.includes("?vr");
 
   if (isVR) {
+    document.querySelector("#text").innerHTML =
+      "Ensure WebXR is enabled in settings, then press the button at the bottom.<br/>by <a href=\"https://mattvr.io\">Matt VR</a>";
     const response = await fetch("/art/index.json");
     try {
       const json = await response.json();
@@ -94,7 +97,7 @@ export const initPaintings = async (): Promise<void> => {
     }
   } else {
     document.querySelector("#text").innerHTML =
-      "Please use a VR headset to load the full experience.<br/>You can add <b>?vr</b> to the URL if you're on a desktop.";
+      "Please use a VR headset to load the full experience.<br/>You can add <b>?vr</b> to the URL if you're on a desktop.<br/>by <a href=\"https://mattvr.io\">Matt VR</a>";
     console.warn("Not VR, falling back to built-ins.");
     paintings.push(...lowResPaintings);
   }
